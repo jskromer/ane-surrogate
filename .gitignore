@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.DS_Store
+*.mlpackage/
+*.mlmodel
+data/*.csv
+models/*.pt
+models/*.mlpackage
+.ipynb_checkpoints/
