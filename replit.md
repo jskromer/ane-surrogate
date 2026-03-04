@@ -4,18 +4,24 @@ ANE-accelerated surrogate model for building energy calibration, adapted to run 
 
 ## Project Overview
 
-Exposes a building energy surrogate model as an MCP (Model Context Protocol) tool server. Predicts monthly electricity and natural gas consumption for a DOE Reference Small Office building (511 m², Chicago) given 4 calibration parameters and a month.
+A building energy surrogate model project with two components:
 
-**Original design**: Apple Silicon / CoreML inference on Apple Neural Engine  
-**Replit adaptation**: Pure numpy MLP inference (same architecture: 5→64→64→32→2)
+1. **Frontend site** (`src/App.jsx`) — React + Recharts interactive showcase of the surrogate model, with scenario comparison charts, pipeline visualization, and insight callouts. Served via Vite on port 5000.
+2. **MCP server** (`mcp_server.py`) — FastMCP stdio server exposing 4 prediction tools to Claude/MCP clients. Uses numpy MLP inference.
 
-## Architecture
+## Frontend (React + Vite)
+
+- **Entry**: `index.html` → `src/main.jsx` → `src/App.jsx`
+- **Original source**: `docs/site/ane-surrogate-site.jsx` (from GitHub repo)
+- **Dependencies**: react, react-dom, recharts, vite, @vitejs/plugin-react
+- **Port**: 5000 (Vite dev server, 0.0.0.0)
+- **Deploy**: Static site, `npx vite build` → `dist/`
+
+## Backend (MCP Server)
 
 - **`mcp_server.py`** — MCP stdio server exposing 4 tools to Claude
-- **`models/norm_stats.npz`** — Input/output normalization statistics (x_mean, x_std, y_mean, y_std)
-- **`models/numpy_weights.npz`** — Trained numpy MLP weights (W1/b1..W4/b4), 5→64→64→32→2
-- **`scripts/energy_predictor.py`** — Original PyTorch → CoreML training pipeline (Apple only)
-- **`scripts/run_eplus_batch.py`** — Parametric EnergyPlus batch runner (Apple only, requires EnergyPlus)
+- **`models/norm_stats.npz`** — Input/output normalization statistics
+- **`models/numpy_weights.npz`** — Trained numpy MLP weights (5→64→64→32→2)
 
 ## MCP Tools
 
@@ -37,29 +43,12 @@ Exposes a building energy surrogate model as an MCP (Model Context Protocol) too
 
 ## Replit Adaptations
 
-1. **Removed `coremltools`** from `pyproject.toml` (Apple Silicon only)
-2. **Replaced CoreML inference** with pure numpy forward pass in `mcp_server.py`
-3. **Trained numpy weights** (`models/numpy_weights.npz`) using physics-based synthetic data scaled to match original normalization statistics
-4. **Workflow**: Console workflow running `python3 mcp_server.py` (MCP stdio transport)
-
-## Usage
-
-The server uses MCP stdio transport — it reads JSON-RPC messages from stdin and writes responses to stdout. Logs go to stderr.
-
-### Connect from Claude Desktop (on Apple machine)
-
-```json
-{
-  "mcpServers": {
-    "ane-surrogate": {
-      "command": "python3",
-      "args": ["mcp_server.py"]
-    }
-  }
-}
-```
+1. Removed `coremltools` from `pyproject.toml` (Apple Silicon only)
+2. Replaced CoreML inference with pure numpy forward pass in `mcp_server.py`
+3. Trained numpy weights using physics-based synthetic data scaled to match original normalization statistics
+4. Added React frontend from the repo's `docs/site/` JSX file
 
 ## Dependencies
 
-- `mcp[cli]` — FastMCP server framework
-- `numpy` — Array math and MLP inference
+**Python**: mcp[cli], numpy, flask  
+**Node**: react, react-dom, recharts, vite, @vitejs/plugin-react

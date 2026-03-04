@@ -1,4 +1,4 @@
-modules = ["python-3.10"]
+modules = ["python-3.10", "nodejs-22"]
 [agent]
 expertMode = true
 
@@ -21,13 +21,20 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 mcp_server.py"
-
-[workflows.workflow.metadata]
-outputType = "console"
+args = "npx vite --host 0.0.0.0 --port 5000"
+waitForPort = 5000
 
 [deployment]
-deploymentTarget = "vm"
+deploymentTarget = "static"
 run = ["python3", "mcp_server.py"]
+build = ["npx", "vite", "build"]
+publicDir = "dist"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
