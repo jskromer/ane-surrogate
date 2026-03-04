@@ -91,9 +91,55 @@ python3 scripts/run_eplus_batch.py --num-runs 200 --output data/large_run.csv
 
 At ~1.5 s/run with 4 workers, 500 runs takes ~3 minutes.
 
+## MCP server
+
+An MCP tool server exposes the surrogate to Claude (Desktop or Code), enabling instant energy predictions without Docker or EnergyPlus.
+
+### Setup
+
+```bash
+# Install dependencies
+uv sync
+
+# Interactive testing with MCP inspector
+uv run mcp dev mcp_server.py
+```
+
+### Claude Desktop
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "ane-surrogate": {
+      "command": "uv",
+      "args": [
+        "--directory", "/Users/jskromer/Projects/ane-surrogate",
+        "run", "mcp_server.py"
+      ]
+    }
+  }
+}
+```
+
+### Tools
+
+| Tool | Description |
+|---|---|
+| `predict_energy` | Predict electricity and gas for one month |
+| `compare_scenarios` | Compare 2-4 scenarios across all 12 months |
+| `sweep_parameter` | Vary one parameter across its range |
+| `get_parameter_info` | Return valid ranges and baselines |
+
+Example prompts:
+- "What energy would a building use with COP 4.0 and 15 W/m² lighting in January?"
+- "Compare baseline vs high-efficiency (COP 5.0, 0.12 m insulation)"
+- "Show me how electricity changes as I vary COP from 2.5 to 5.5"
+
 ## Requirements
 
 - macOS 15+ with Apple Silicon (M1/M2/M3/M4)
-- Python 3.9+
-- EnergyPlus 25.2.0 (at `/Applications/EnergyPlus-25-2-0/`)
+- Python 3.10+
+- EnergyPlus 25.2.0 (at `/Applications/EnergyPlus-25-2-0/`) — only for generating training data
 - PyTorch, coremltools, numpy

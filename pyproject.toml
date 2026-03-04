@@ -1,0 +1,10 @@
+[project]
+name = "ane-surrogate"
+version = "0.1.0"
+description = "ANE-accelerated surrogate model for building energy prediction"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "mcp[cli]",
+    "coremltools",
+    "numpy",
+]

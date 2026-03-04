@@ -46,9 +46,57 @@ python3 scripts/run_eplus_batch.py --num-runs 50 --workers 4
 # Output: data/eplus_training_data.csv (N_runs × 12 months)
 ```
 
+## MCP server
+
+`mcp_server.py` exposes the CoreML surrogate as an MCP tool server (FastMCP, stdio transport). No Docker or EnergyPlus required — runs natively on Apple Silicon.
+
+### Setup
+
+```bash
+# Install dependencies (uses uv with pyproject.toml)
+uv sync
+
+# Start server (waits on stdin for MCP messages)
+uv run mcp_server.py
+
+# Interactive testing with MCP inspector
+uv run mcp dev mcp_server.py
+```
+
+### Claude Desktop config
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "ane-surrogate": {
+      "command": "uv",
+      "args": [
+        "--directory", "/Users/jskromer/Projects/ane-surrogate",
+        "run", "mcp_server.py"
+      ]
+    }
+  }
+}
+```
+
+### Tools
+
+- `predict_energy` — single month prediction (all 4 params + month required)
+- `compare_scenarios` — compare 2-4 named scenarios across all 12 months
+- `sweep_parameter` — vary one parameter across its range, all 12 months per point
+- `get_parameter_info` — parameter ranges and baselines
+
+### Key details
+
+- Inputs are physical units; server normalizes internally
+- Outputs are total facility electricity and natural gas (kWh) — not sub-metered
+- Logs to stderr (stdout is MCP stdio transport)
+
 ## Conventions
 
-- Python 3.9+, PyTorch, coremltools, numpy
+- Python 3.10+, PyTorch, coremltools, numpy
 - Models output to `/tmp/` during development; production models go in `models/`
 - Input features normalized (zero mean, unit variance) before inference
 - CoreML models use `ComputeUnit.ALL` to enable ANE execution
