@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from "recharts";
 
-const COPPER = "#D4A574";
-const CHARCOAL = "#1E1E1E";
-const DARK_BG = "#141414";
-const CARD_BG = "#1C1C1C";
-const WARM_WHITE = "#F5F0EB";
-const MUTED = "#7A7A7A";
-const GREEN = "#7CB587";
-const RED = "#D4756B";
-const BLUE = "#6B9EC4";
-const TEAL = "#6BB5B5";
+const COPPER = "#B07D4F";
+const CHARCOAL = "#2D2D2D";
+const DARK_BG = "#FAFAF8";
+const CARD_BG = "#FFFFFF";
+const WARM_WHITE = "#1A1A1A";
+const MUTED = "#6B6B6B";
+const GREEN = "#2D8A4E";
+const RED = "#C0392B";
+const BLUE = "#2B6CB0";
+const TEAL = "#1A8A8A";
+const BORDER = "#E2E0DC";
 
 const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -86,17 +87,17 @@ function PipelineSection() {
               style={{
                 flex: "1 1 0",
                 minWidth: 130,
-                background: isActive ? "#252525" : CARD_BG,
+                background: isActive ? "#F0EDE8" : CARD_BG,
                 borderRadius: 8,
                 padding: "20px 16px",
                 cursor: "pointer",
-                border: `1px solid ${isActive ? COPPER : "#2A2A2A"}`,
+                border: `1px solid ${isActive ? COPPER : BORDER}`,
                 transition: "all 0.3s ease",
                 position: "relative",
               }}
             >
               {i < pipelineSteps.length - 1 && (
-                <div style={{ position: "absolute", right: -8, top: "50%", transform: "translateY(-50%)", color: "#333", fontSize: 18, zIndex: 1 }}>→</div>
+                <div style={{ position: "absolute", right: -8, top: "50%", transform: "translateY(-50%)", color: "#CCC", fontSize: 18, zIndex: 1 }}>→</div>
               )}
               <div style={{ fontSize: 28, marginBottom: 8 }}>{step.icon}</div>
               <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: WARM_WHITE, marginBottom: 4 }}>{step.title}</div>
@@ -128,11 +129,11 @@ function ScenarioCard({ id, scenario, isSelected, onToggle, baselineElec, baseli
     <div
       onClick={onToggle}
       style={{
-        background: isSelected ? "#222" : CARD_BG,
+        background: isSelected ? "#F5F3EF" : CARD_BG,
         borderRadius: 8,
         padding: "16px 18px",
         cursor: "pointer",
-        border: `1.5px solid ${isSelected ? scenario.color : "#2A2A2A"}`,
+        border: `1.5px solid ${isSelected ? scenario.color : BORDER}`,
         transition: "all 0.25s ease",
         opacity: isSelected ? 1 : 0.55,
       }}
@@ -168,7 +169,7 @@ function ScenarioCard({ id, scenario, isSelected, onToggle, baselineElec, baseli
 
 function InsightCallout({ icon, title, text }) {
   return (
-    <div style={{ background: "#1A1A1A", border: "1px solid #2A2A2A", borderLeft: `3px solid ${COPPER}`, borderRadius: "0 6px 6px 0", padding: "16px 20px", marginBottom: 12 }}>
+    <div style={{ background: "#F8F6F3", border: `1px solid ${BORDER}`, borderLeft: `3px solid ${COPPER}`, borderRadius: "0 6px 6px 0", padding: "16px 20px", marginBottom: 12 }}>
       <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
         <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>{icon}</span>
         <div>
@@ -237,14 +238,14 @@ export default function ANESurrogateSite() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: "#2A2A2A" }} /></div>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: BORDER }} /></div>
 
       {/* Pipeline */}
       <div style={{ padding: "48px 32px", maxWidth: 900, margin: "0 auto" }}>
         <PipelineSection />
       </div>
 
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: "#2A2A2A" }} /></div>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: BORDER }} /></div>
 
       {/* Interactive Scenario Comparison */}
       <div style={{ padding: "48px 32px", maxWidth: 900, margin: "0 auto" }}>
@@ -273,8 +274,8 @@ export default function ANESurrogateSite() {
               style={{
                 fontFamily: "'JetBrains Mono', monospace", fontSize: 12,
                 padding: "8px 16px", borderRadius: 6, border: "none", cursor: "pointer",
-                background: fuelView === key ? COPPER : "#252525",
-                color: fuelView === key ? DARK_BG : MUTED,
+                background: fuelView === key ? COPPER : "#EDEBE7",
+                color: fuelView === key ? "#FFFFFF" : MUTED,
                 fontWeight: fuelView === key ? 700 : 400,
                 transition: "all 0.2s ease",
               }}
@@ -282,7 +283,7 @@ export default function ANESurrogateSite() {
           ))}
         </div>
 
-        <div style={{ background: CARD_BG, borderRadius: 10, padding: "24px 16px 16px", border: "1px solid #2A2A2A" }}>
+        <div style={{ background: CARD_BG, borderRadius: 10, padding: "24px 16px 16px", border: `1px solid ${BORDER}` }}>
           <ResponsiveContainer width="100%" height={320}>
             <AreaChart data={chartData} margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
               <defs>
@@ -293,10 +294,10 @@ export default function ANESurrogateSite() {
                   </linearGradient>
                 ))}
               </defs>
-              <XAxis dataKey="month" tick={{ fill: MUTED, fontSize: 11, fontFamily: "JetBrains Mono" }} axisLine={{ stroke: "#2A2A2A" }} tickLine={false} />
+              <XAxis dataKey="month" tick={{ fill: MUTED, fontSize: 11, fontFamily: "JetBrains Mono" }} axisLine={{ stroke: BORDER }} tickLine={false} />
               <YAxis tick={{ fill: MUTED, fontSize: 11, fontFamily: "JetBrains Mono" }} axisLine={false} tickLine={false} width={52} tickFormatter={(v) => `${(v/1000).toFixed(1)}k`} />
               <Tooltip
-                contentStyle={{ background: "#222", border: "1px solid #333", borderRadius: 6, fontFamily: "JetBrains Mono", fontSize: 12 }}
+                contentStyle={{ background: "#FFFFFF", border: `1px solid ${BORDER}`, borderRadius: 6, fontFamily: "JetBrains Mono", fontSize: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
                 labelStyle={{ color: WARM_WHITE, marginBottom: 4 }}
                 itemStyle={{ padding: "1px 0" }}
                 formatter={(val, name) => [`${fmt(val)} kWh`, scenarios[name]?.label || name]}
@@ -317,7 +318,7 @@ export default function ANESurrogateSite() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: "#2A2A2A" }} /></div>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: BORDER }} /></div>
 
       {/* Insights */}
       <div style={{ padding: "48px 32px", maxWidth: 900, margin: "0 auto" }}>
@@ -348,7 +349,7 @@ export default function ANESurrogateSite() {
         />
       </div>
 
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: "#2A2A2A" }} /></div>
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px" }}><div style={{ height: 1, background: BORDER }} /></div>
 
       {/* MCP Tools */}
       <div style={{ padding: "48px 32px 28px", maxWidth: 900, margin: "0 auto" }}>
@@ -392,11 +393,11 @@ export default function ANESurrogateSite() {
 
       {/* Footer */}
       <div style={{ padding: "32px 32px 48px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
-        <div style={{ height: 1, background: "#2A2A2A", marginBottom: 32 }} />
+        <div style={{ height: 1, background: BORDER, marginBottom: 32 }} />
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: MUTED }}>
           Steve Kromer — <span style={{ color: COPPER }}>Counterfactual Designs</span> — Building Energy M&V | CMVP
         </div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#444", marginTop: 8 }}>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#AAA", marginTop: 8 }}>
           github.com/jskromer/ane-surrogate
         </div>
       </div>
