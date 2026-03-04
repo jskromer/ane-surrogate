@@ -1,18 +1,19 @@
 """
 ANE Surrogate MCP Server
 
-Exposes a CoreML building-energy surrogate model to Claude via MCP.
+Exposes a building-energy surrogate model to Claude via MCP.
 Predicts monthly electricity and natural gas consumption for a DOE Reference
 Small Office building given 4 calibration parameters + month.
 
-Runs on Apple's Neural Engine — 0.035 ms per prediction, no Docker required.
+Uses a pure numpy MLP for inference (compatible with Linux/Replit environments).
+On Apple Silicon with CoreML available, replace the numpy inference with the
+CoreML model for ~0.035 ms per prediction on Apple Neural Engine.
 """
 
 import sys
 import logging
 from pathlib import Path
 
-import coremltools as ct
 import numpy as np
 from mcp.server.fastmcp import FastMCP
 
@@ -25,16 +26,36 @@ logging.basicConfig(
 )
 log = logging.getLogger("ane-surrogate")
 
-# ── Load CoreML model and normalization stats ────────────────────────────
+# ── Load normalization stats and numpy model weights ─────────────────────
 
-MODEL_PATH = Path(__file__).parent / "models" / "energy_surrogate.mlpackage"
 STATS_PATH = Path(__file__).parent / "models" / "norm_stats.npz"
+WEIGHTS_PATH = Path(__file__).parent / "models" / "numpy_weights.npz"
 
-log.info("Loading CoreML model from %s", MODEL_PATH)
-model = ct.models.MLModel(str(MODEL_PATH))
+log.info("Loading normalization stats from %s", STATS_PATH)
 stats = np.load(str(STATS_PATH))
 x_mean, x_std = stats["x_mean"], stats["x_std"]
+y_mean, y_std = stats["y_mean"], stats["y_std"]
+
+log.info("Loading numpy MLP weights from %s", WEIGHTS_PATH)
+w = np.load(str(WEIGHTS_PATH))
+W1, b1 = w["W1"], w["b1"]
+W2, b2 = w["W2"], w["b2"]
+W3, b3 = w["W3"], w["b3"]
+W4, b4 = w["W4"], w["b4"]
 log.info("Model loaded — ready for predictions")
+
+
+def _relu(x: np.ndarray) -> np.ndarray:
+    return np.maximum(0, x)
+
+
+def _mlp_predict(x_norm: np.ndarray) -> np.ndarray:
+    """Run forward pass through 5->64->64->32->2 MLP."""
+    h1 = _relu(x_norm @ W1 + b1)
+    h2 = _relu(h1 @ W2 + b2)
+    h3 = _relu(h2 @ W3 + b3)
+    return h3 @ W4 + b4
+
 
 # ── Parameter metadata ───────────────────────────────────────────────────
 
@@ -86,7 +107,7 @@ BASELINE = {name: p["baseline"] for name, p in PARAMS.items()}
 def _predict(wall_insul_thickness: float, infil_multiplier: float,
              cooling_cop: float, lighting_density: float,
              month: int) -> tuple[float, float]:
-    """Run a single prediction through the CoreML model.
+    """Run a single prediction through the numpy MLP.
 
     Inputs are in physical units. Returns (electricity_kwh, gas_kwh).
     """
@@ -94,8 +115,9 @@ def _predict(wall_insul_thickness: float, infil_multiplier: float,
                      cooling_cop, lighting_density, float(month)]],
                    dtype=np.float32)
     normalized = (raw - x_mean) / x_std
-    result = model.predict({"calibration_params": normalized})
-    out = result["energy_kwh"].flatten()
+    out_norm = _mlp_predict(normalized)
+    out = out_norm * y_std + y_mean
+    out = np.maximum(0, out.flatten())
     return float(out[0]), float(out[1])
 
 
@@ -337,7 +359,7 @@ def get_parameter_info() -> str:
         "",
         "Building: DOE Reference Small Office (511 m², 5-zone)",
         "Location: Chicago, IL (TMY3 weather)",
-        "Model: 5 → 64 → 64 → 32 → 2 MLP on Apple Neural Engine",
+        "Model: 5 → 64 → 64 → 32 → 2 MLP (numpy inference)",
         "Outputs: Total facility electricity and natural gas (kWh/month)",
         "",
         f"{'Parameter':<25s} {'Range':>15s} {'Units':>6s} {'Baseline':>10s}",
