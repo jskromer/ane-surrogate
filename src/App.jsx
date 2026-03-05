@@ -75,7 +75,7 @@ function PipelineSection() {
     <div style={{ margin: "0 0 80px 0" }}>
       <h2 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, letterSpacing: 3, color: COPPER, textTransform: "uppercase", marginBottom: 8 }}>The Pipeline</h2>
       <p style={{ color: MUTED, fontSize: 15, marginBottom: 36, maxWidth: 540, lineHeight: 1.6 }}>
-        From physics simulation to instant prediction in five steps. The entire pipeline runs on a laptop.
+        From physics simulation to instant prediction in five steps. The entire pipeline runs on a laptop or a Mac Mini.
       </p>
       <div style={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
         {pipelineSteps.map((step, i) => {
