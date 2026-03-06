@@ -394,10 +394,39 @@ export default function ANESurrogateSite() {
       {/* Footer */}
       <div style={{ padding: "32px 32px 48px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
         <div style={{ height: 1, background: BORDER, marginBottom: 32 }} />
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: MUTED }}>
-          Steve Kromer — <span style={{ color: COPPER }}>Counterfactual Designs</span> — Building Energy M&V | CMVP
+        <div style={{ display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap", marginBottom: 16 }}>
+          <a href="https://cfdesigns.vercel.app" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#b5632e", textDecoration: "none", fontWeight: 600 }}>
+            Counterfactual Designs →
+          </a>
+          <a href="https://bayesian-mv.vercel.app" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#7c5cbf", textDecoration: "none", fontWeight: 600 }}>
+            Bayesian Module →
+          </a>
+          <a href="https://mv-course.vercel.app" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#a67c28", textDecoration: "none", fontWeight: 600 }}>
+            IPMVP Reference →
+          </a>
+          <a href="https://mv-classmap.vercel.app" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#2d7d46", textDecoration: "none", fontWeight: 600 }}>
+            Learning Path →
+          </a>
+          <a href="https://cmvp-capstone.vercel.app" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#c0392b", textDecoration: "none", fontWeight: 600 }}>
+            CMVP Capstone →
+          </a>
+          <a href="https://mnvscore.vercel.app" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#2c6fad", textDecoration: "none", fontWeight: 600 }}>
+            M&V Scorecard →
+          </a>
         </div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#AAA", marginTop: 8 }}>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: MUTED, marginBottom: 8 }}>
+          <a href="https://counterfactual-designs.com" target="_blank" rel="noopener noreferrer"
+            style={{ color: MUTED, textDecoration: "none" }}>
+            counterfactual-designs.com
+          </a>
+        </div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: "#AAA" }}>
           github.com/jskromer/ane-surrogate
         </div>
       </div>
